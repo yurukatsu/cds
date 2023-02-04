@@ -1,0 +1,15 @@
+version: '3'
+services:
+  python:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/root/cds
+    ports:
+      - 18888:8888
+      - 18889:8889
+      - 18890:18890
+    env_file:
+      - .env
+    tty: true
