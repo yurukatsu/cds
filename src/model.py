@@ -1,7 +1,9 @@
 from typing import Tuple
+
 import numpy as np
 import statsmodels.api as sm
 from scipy.optimize import minimize
+
 
 class RegimeSwitchingModel(sm.tsa.MarkovRegression):
     def __init__(
@@ -340,23 +342,29 @@ class MarkovRegressionWithPenalty:
         start_params: np.array,
         cost_weights: np.array,
         method="powell",
+        maxiter=100,
         **cost_kwargs
     ):
-        def constraint_1(params):
-            _, _, log_variance, _, _ = self.disassemble_params(
-                params, self.k_regimes, self.k_exogs
-            )
-            return log_variance[0] - log_variance[1]
+        # def constraint_1(params):
+        #     _, _, log_variance, _, _ = self.disassemble_params(
+        #         params, self.k_regimes, self.k_exogs
+        #     )
+        #     return log_variance[0] - log_variance[1]
         
-        constraints = (
-            {"type": "ineq", "func": constraint_1}
-        )
+        # constraints = (
+        #     {"type": "ineq", "func": constraint_1}
+        # )
         
         def _cost(
             params: np.array,
         ) -> float:
             trend, beta, log_variance, p1, p2 = self.disassemble_params(
                     params, self.k_regimes, self.k_exogs)
+            
+            # swap
+            if log_variance[1] > log_variance[0]:
+                log_variance = log_variance[::-1]
+            
             # 条件付きの観測確率
             conditional_observation_probabilities = self.calc_conditional_observation_probabilities(self.y, self.X, trend, beta, np.exp(log_variance))
             # 遷移確率
@@ -384,11 +392,38 @@ class MarkovRegressionWithPenalty:
             _cost,
             x0=start_params,
             method=method,
-            constraints=constraints,
             options={
                 "disp": True,
-                "maxiter": 100
+                "maxiter": maxiter
             }
         )
         
-        return res
+        trend, beta, log_variance, p1, p2 = self.disassemble_params(res.x, self.k_regimes, self.k_exogs)
+        # swap
+        if log_variance[1] > log_variance[0]:
+            log_variance = log_variance[::-1]
+        # 条件付きの観測確率
+        conditional_observation_probabilities = self.calc_conditional_observation_probabilities(self.y, self.X, trend, beta, np.exp(log_variance))
+        # 遷移確率
+        transition_matrix = self.make_2d_transition_matrix_from_parameters(p1, p2)
+        # 初期フィルター化確率
+        initial_filtered_prob = self.cal_ergotic_stationary_prob(transition_matrix)
+        # 条件付きの観測確率の周辺
+        marginal_observation_probabilities, filtered_probabilities = \
+            self.calc_marginal_observation_probs_and_filtered_probs(
+                conditional_observation_probabilities,
+                transition_matrix,
+                initial_filtered_prob
+            )
+        summary = {
+            "trend": trend,
+            "beta": beta,
+            "variance": np.sqrt(np.exp(log_variance)),
+            "p1": p1,
+            "p2": p2,
+            "transition_matrix": transition_matrix,
+            "marginal_observation_probabilities": marginal_observation_probabilities,
+            "filtered_probabilities": filtered_probabilities
+        }
+        
+        return summary
