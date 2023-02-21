@@ -541,6 +541,31 @@ files = [
 ]
 
 [[package]]
+name = "funsor"
+version = "0.4.5"
+description = "A tensor-like library for functions and distributions"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "funsor-0.4.5-py3-none-any.whl", hash = "sha256:b99a2b5ddb26a93b5e9d28b82dbc8f36efc686c37da2f71086bfa5bc7f45726d"},
+    {file = "funsor-0.4.5.tar.gz", hash = "sha256:08b77e5de04d7cf5213b4013a08a2e756ab52572a48bef6774a0c70664d4fe31"},
+]
+
+[package.dependencies]
+makefun = "*"
+multipledispatch = "*"
+numpy = ">=1.7"
+opt-einsum = ">=2.3.2"
+typing-extensions = "*"
+
+[package.extras]
+dev = ["black", "flake8", "isort (>=5.0)", "nbsphinx", "pandas", "pillow (==8.2.0)", "pytest (==4.3.1)", "pytest-xdist (==1.27.0)", "scipy", "sphinx (>=2.0)", "sphinx-gallery", "sphinx-rtd-theme", "torchvision (>=0.12.0)"]
+jax = ["jax (>=0.2.21)", "jaxlib (>=0.1.71)", "numpyro (>=0.7.0)"]
+test = ["black", "flake8", "isort (>=5.0)", "pandas", "pillow (==8.2.0)", "pyro-api (>=0.1.2)", "pytest (==4.3.1)", "pytest-xdist (==1.27.0)", "requests", "scipy", "torchvision (>=0.12.0)"]
+torch = ["pyro-ppl (>=1.8.0)", "torch (>=1.11.0)"]
+
+[[package]]
 name = "idna"
 version = "3.4"
 description = "Internationalized Domain Names in Applications (IDNA)"
@@ -1095,6 +1120,18 @@ files = [
     {file = "llvmlite-0.39.1-cp39-cp39-win32.whl", hash = "sha256:03aee0ccd81735696474dc4f8b6be60774892a2929d6c05d093d17392c237f32"},
     {file = "llvmlite-0.39.1-cp39-cp39-win_amd64.whl", hash = "sha256:3fc14e757bc07a919221f0cbaacb512704ce5774d7fcada793f1996d6bc75f2a"},
     {file = "llvmlite-0.39.1.tar.gz", hash = "sha256:b43abd7c82e805261c425d50335be9a6c4f84264e34d6d6e475207300005d572"},
+]
+
+[[package]]
+name = "makefun"
+version = "1.15.0"
+description = "Small library to dynamically create python functions."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "makefun-1.15.0-py2.py3-none-any.whl", hash = "sha256:d79319f9e71b6825ca163be0afa45cbc5b1215e682efa35b2d355a03c594279c"},
+    {file = "makefun-1.15.0.tar.gz", hash = "sha256:5b110e733d94f7a49d8ac27b1e2d40f2bb0501e98c1d825e0d932d26920dd5df"},
 ]
 
 [[package]]
@@ -1902,6 +1939,18 @@ files = [
 ]
 
 [[package]]
+name = "pulp"
+version = "2.7.0"
+description = "PuLP is an LP modeler written in python. PuLP can generate MPS or LP files and call GLPK, COIN CLP/CBC, CPLEX, and GUROBI to solve linear problems."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "PuLP-2.7.0-py3-none-any.whl", hash = "sha256:b6de42c929e80325bf44cc7a2997f02535440800c376b9eb8cb7b4670ed53769"},
+    {file = "PuLP-2.7.0.tar.gz", hash = "sha256:e73ee6b32d639c9b8cf4b4aded334ba158be5f8313544e056f796ace0a10ae63"},
+]
+
+[[package]]
 name = "pure-eval"
 version = "0.2.2"
 description = "Safely evaluate AST nodes without side effects"
@@ -2639,6 +2688,18 @@ docs = ["myst-parser", "pydata-sphinx-theme", "sphinx"]
 test = ["argcomplete (>=2.0)", "pre-commit", "pytest", "pytest-mock"]
 
 [[package]]
+name = "typing-extensions"
+version = "4.4.0"
+description = "Backported and Experimental Type Hints for Python 3.7+"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "typing_extensions-4.4.0-py3-none-any.whl", hash = "sha256:16fa4864408f655d35ec496218b85f79b3437c829e93320c7c9215ccfd92489e"},
+    {file = "typing_extensions-4.4.0.tar.gz", hash = "sha256:1511434bb92bf8dd198c12b1cc812e800d4181cfcb867674e0f8279cc93087aa"},
+]
+
+[[package]]
 name = "uri-template"
 version = "1.2.0"
 description = "RFC 6570 URI Template Processor"
@@ -2799,4 +2860,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9.0, <3.11"
-content-hash = "a4a4c7cc890a3224aa7c9721d906117806cbe862e6510f9513526fa3e7a78540"
+content-hash = "73099bffe0f0241cc1f1a72abb645c65e370ad7d1f6835e67bb19be5d1c1954d"
