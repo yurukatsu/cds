@@ -1,6 +1,6 @@
 import datetime
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Literal
 
 import pandas as pd
 import numpy as np
@@ -14,6 +14,7 @@ def create_train_test_data(
     use_factor_lag: int = 1,
     rolling_span: int = 250,
     normalize_exog: bool = True,
+    normalize_exog_type: Literal["divmax", "z", "z2"] = "divmax",
     varbose: bool = True
 ) -> Tuple:
     """訓練データとテストデータを作成する
@@ -55,12 +56,34 @@ def create_train_test_data(
         X = df_X.loc[df_X.index < base_date].loc[:, factor_selected].iloc[-rolling_span - prediction_lag:-prediction_lag+1, :]
     else:
         X = df_X.loc[df_X.index < base_date].loc[:, factor_selected].iloc[-rolling_span - prediction_lag:, :]
+    X_train = X.iloc[:-1, :]
+    X_test = X.iloc[-1, :]
     # 標準化する
     if normalize_exog:
-        # X = (X - X.mean(axis=0)) / X.std(axis=0)
-        X = X/np.abs(X).max(axis=0)
-        
-    # print(X.mean(axis=0), X.shape)
+        if normalize_exog_type == "z":
+            for col in X_train:
+                std_ = X_train[col].std()
+                mean_ = X_train[col].mean()
+                if std_ > 0:
+                    X_train[col] = (X_train[col] - mean_) / std_
+                    X_test[col] = (X_test[col] - mean_) / std_
+                else:
+                    X_train[col] = (X_train[col] - mean_)
+                    X_test[col] = (X_test[col] - mean_)
+        if normalize_exog_type == "divmax":
+            eps = 1e-20
+            max_ = np.abs(X_train).max(axis=0) + eps
+            X_train = X_train / max_
+            X_test = X_test / max_
+        if normalize_exog_type == "z2":
+            std_ = X_train.std()
+            mean_ = X_train.mean()
+            X_train = (X_train - mean_) / std_
+            X_train = X_train.fillna(0)
+            X_train = X_train.replace([np.inf, -np.inf], 0)
+            X_test = (X_test - mean_) / std_
+            X_test = X_test.fillna(0)
+            X_test = X_test.replace([np.inf, -np.inf], 0)
         
     if varbose:
         print(
@@ -72,4 +95,4 @@ def create_train_test_data(
                 "date_X_test: {}".format(X.index[-1])
         )
 
-    return y.iloc[:-1 ], y.iloc[-1].values, X.iloc[:-1, :], X.iloc[-1, :]
+    return y.iloc[:-1 ], y.iloc[-1].values, X_train, X_test
